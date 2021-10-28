@@ -28,7 +28,6 @@ func main() {
 	if *httpAddr == "" {
 		os.Exit(1)
 	}
-	fmt.Println("Is this Ran?")
 
 	store := user.NewStore()
 	userServer := user.NewServer(logrus.Logger{}, store)
