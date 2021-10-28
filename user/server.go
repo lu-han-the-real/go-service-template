@@ -14,7 +14,7 @@ type User struct {
 }
 
 type Server interface {
-	CreateUser(ctx context.Context, userName string, email string) error
+	CreateUser(ctx context.Context, userName string, email string) (User, error)
 	GetUser(ctx context.Context, userName string) (User, error)
 }
 
@@ -32,12 +32,13 @@ func NewServer(logger logrus.Logger, store Store) Server {
 }
 
 // CreateUser creates a user profile on storage with given username and password
-func (s server) CreateUser(ctx context.Context, username string, password string) error {
-	if s.store.CreateUser(username, password) != nil {
+func (s server) CreateUser(ctx context.Context, username string, password string) (User, error) {
+	user, err := s.store.CreateUser(username, password)
+	if err != nil {
 		// TODO: lhan seek better error package
-		return errors.New("failed to create user")
+		return User{}, errors.New("failed to create user")
 	}
-	return nil
+	return user, nil
 }
 
 // GetUser fetch the stored user by given id.

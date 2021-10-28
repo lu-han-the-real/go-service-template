@@ -33,6 +33,7 @@ func main() {
 	userServer := user.NewServer(logrus.Logger{}, store)
 
 	httpServer := server.NewHTTPServer(context.Background(), server.MakeEndpoints(userServer))
+	fmt.Println(fmt.Sprintf("Starting server to listen on address: %s", *httpAddr))
 	err := http.ListenAndServe(*httpAddr, httpServer)
 	if err != nil {
 		fmt.Println(err)

@@ -28,6 +28,7 @@ type CreateUserRequest struct {
 }
 
 type CreateUserResponse struct {
+	User user.User `json:"user"`
 	Err error `json:"err"`
 }
 
@@ -35,11 +36,11 @@ type CreateUserResponse struct {
 func makeCreateUserEndpoint(svc user.Server) endpoint.Endpoint {
 	return func(ctx context.Context, request interface{}) (interface{}, error) {
 		req := request.(CreateUserRequest)
-		err := svc.CreateUser(ctx, req.Username, req.Password)
+		userResult, err := svc.CreateUser(ctx, req.Username, req.Password)
 		if err != nil {
-			return CreateUserResponse{err}, nil
+			return CreateUserResponse{user.User{}, err}, err
 		}
-		return CreateUserResponse{}, nil
+		return CreateUserResponse{userResult, nil}, nil
 	}
 }
 
@@ -58,7 +59,7 @@ func makeGetUserEndpoint(svc user.Server) endpoint.Endpoint {
 		req := request.(GetUserRequest)
 		localUser, err := svc.GetUser(ctx, req.ID)
 		if err != nil {
-			return GetUserResponse{UserProfile: user.User{}, Err: err}, nil
+			return GetUserResponse{UserProfile: user.User{}, Err: err}, err
 		}
 		return GetUserResponse{localUser, nil}, nil
 	}

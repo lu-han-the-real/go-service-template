@@ -7,7 +7,7 @@ import (
 
 // Store interface to provide User's Data's CRUD interaction via database storage
 type Store interface {
-	CreateUser(username,password string) error
+	CreateUser(username,password string) (User, error)
 	GetUser(id string) (User, error)
 }
 
@@ -20,13 +20,13 @@ func NewStore() Store{
 	return &localStore{UserProfiles: userProfiles}
 }
 
-func (l *localStore)CreateUser(username, password string) error {
+func (l *localStore) CreateUser(username, password string) (User, error){
 	if username == "" {
-		return errors.New("user name should not be empty")
+		return User{}, errors.New("user name should not be empty")
 	}
 
 	if password == "" {
-		return errors.New("password should not be empty")
+		return User{}, errors.New("password should not be empty")
 	}
 
 	userID := shortuuid.New()
@@ -37,7 +37,7 @@ func (l *localStore)CreateUser(username, password string) error {
 	}
 	l.UserProfiles[userID] = user
 
-	return nil
+	return user, nil
 }
 
 func (l *localStore) GetUser (id string) (User, error){
