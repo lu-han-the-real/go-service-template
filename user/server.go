@@ -3,9 +3,11 @@ package user
 import (
 	"context"
 	"errors"
-
-	"github.com/go-kit/kit/log/logrus"
+	"github.com/sirupsen/logrus"
+	logLib "go-service-template/lib/log"
 )
+
+const loggerName = "user:server"
 
 type User struct {
 	ID       string `json:"id,omitempty"`
@@ -20,14 +22,14 @@ type Server interface {
 
 type server struct {
 	store  Store
-	logger logrus.Logger
+	logger logrus.FieldLogger
 }
 
 // NewServer initialize a new server
-func NewServer(logger logrus.Logger, store Store) Server {
+func NewServer(logger *logrus.Logger, store Store) Server {
 	return &server{
 		store:  store,
-		logger: logger,
+		logger: logger.WithField(logLib.LoggerKey, loggerName),
 	}
 }
 

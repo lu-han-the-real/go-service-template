@@ -4,13 +4,14 @@ import (
 	"context"
 	"flag"
 	"fmt"
+	"github.com/sirupsen/logrus"
+	logLib "go-service-template/lib/log"
 	"go-service-template/server"
 	"go-service-template/user"
 	"net/http"
 	"os"
 	"text/tabwriter"
 
-	"github.com/go-kit/kit/log/logrus"
 )
 
 func main() {
@@ -30,13 +31,14 @@ func main() {
 	}
 
 	store := user.NewStore()
-	userServer := user.NewServer(logrus.Logger{}, store)
+	logger := logLib.NewStdoutLogger(logrus.InfoLevel)
+	userServer := user.NewServer(logger, store)
 
 	httpServer := server.NewHTTPServer(context.Background(), server.MakeEndpoints(userServer))
-	fmt.Println(fmt.Sprintf("Starting server to listen on address: %s", *httpAddr))
+	logger.Info(fmt.Sprintf("Starting server to listen on address: %s", *httpAddr))
 	err := http.ListenAndServe(*httpAddr, httpServer)
 	if err != nil {
-		fmt.Println(err)
+		logger.Error(err, "failed to listen on target address, exiting")
 	}
 }
 
