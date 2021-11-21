@@ -15,7 +15,7 @@ type Endpoints struct {
 	CreateUser, GetUser endpoint.Endpoint
 }
 
-func MakeEndpoints(s user.Server) Endpoints {
+func MakeEndpoints(s user.Service) Endpoints {
 	return Endpoints{
 		CreateUser: makeCreateUserEndpoint(s),
 		GetUser:    makeGetUserEndpoint(s),
@@ -33,7 +33,7 @@ type CreateUserResponse struct {
 }
 
 // Endpoints are a primary abstraction in go-kit. An endpoint represents a single RPC (method in our service interface)
-func makeCreateUserEndpoint(svc user.Server) endpoint.Endpoint {
+func makeCreateUserEndpoint(svc user.Service) endpoint.Endpoint {
 	return func(ctx context.Context, request interface{}) (interface{}, error) {
 		req := request.(CreateUserRequest)
 		userResult, err := svc.CreateUser(ctx, req.Username, req.Password)
@@ -54,7 +54,7 @@ type GetUserResponse struct {
 }
 
 // Endpoints are a primary abstraction in go-kit. An endpoint represents a single RPC (method in our service interface)
-func makeGetUserEndpoint(svc user.Server) endpoint.Endpoint {
+func makeGetUserEndpoint(svc user.Service) endpoint.Endpoint {
 	return func(ctx context.Context, request interface{}) (interface{}, error) {
 		req := request.(GetUserRequest)
 		localUser, err := svc.GetUser(ctx, req.ID)

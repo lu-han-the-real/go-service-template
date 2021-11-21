@@ -32,7 +32,7 @@ func main() {
 
 	store := user.NewStore()
 	logger := logLib.NewStdoutLogger(logrus.InfoLevel)
-	userServer := user.NewServer(logger, store)
+	userServer := user.NewService(logger, store)
 
 	httpServer := server.NewHTTPServer(context.Background(), server.MakeEndpoints(userServer))
 	logger.Info(fmt.Sprintf("Starting server to listen on address: %s", *httpAddr))
